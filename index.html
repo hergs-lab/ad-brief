@@ -96,6 +96,10 @@
     letter-spacing: 0.04em;
   }
 
+  .key-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .key-dot.set { background: var(--cos-green); }
+  .key-dot.unset { background: #f87171; }
+
   /* PROGRESS */
   .progress-bar {
     background: var(--cos-deep-blue);
@@ -648,6 +652,10 @@
       <div class="header-title">Paid Media Brief Builder</div>
     </div>
     <div class="header-badge">AI-assisted</div>
+    <button onclick="openKeyModal()" style="display:flex;align-items:center;gap:6px;background:none;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:5px 11px;cursor:pointer;font-family:inherit;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='none'">
+      <div class="key-dot unset" id="keyDot"></div>
+      <span id="keyLabel" style="font-size:11px;color:rgba(255,255,255,0.55);">Set API key</span>
+    </button>
   </div>
   <div class="progress-bar">
     <div class="progress-inner">
@@ -669,27 +677,8 @@
 
 <div class="main">
 
-  <!-- HANDOFF BANNER (shown when arriving from assessment tool) -->
-  <div id="handoffBanner" style="display:none; background:#f0f7f2; border:1px solid rgba(24,136,56,0.3); border-radius:12px; padding:20px 24px; margin-bottom:20px;">
-    <div style="display:flex; align-items:flex-start; gap:14px;">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--cos-accessible-green);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div style="flex:1;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cos-accessible-green);margin-bottom:4px;">Loaded from ACO Brief Assessment</div>
-        <div id="handoffTitle" style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:4px;"></div>
-        <div id="handoffRec" style="font-size:12px;margin-bottom:8px;"></div>
-        <div id="handoffSummary" style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:10px;"></div>
-        <div id="handoffConsiderations" style="display:none;">
-          <div style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Conditions from assessment</div>
-          <div id="handoffCondList" style="font-size:13px;color:var(--text-secondary);line-height:1.8;"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="intro-card">
-    <div class="intro-eyebrow">Downstream of your ACO brief</div>
+    <div class="intro-eyebrow">City of Sydney</div>
     <div class="intro-heading">Before you spend a dollar,<br><strong>brief it properly.</strong></div>
     <div class="intro-body">This tool works through each element of a paid media campaign with you, challenges your assumptions, surfaces current best practice, and flags where alternatives to paid advertising might serve you better. Complete all sections to generate a brief ready for Confluence.</div>
   </div>
@@ -708,11 +697,6 @@
       <div class="field">
         <label>Campaign name <span class="tag tag-required">Required</span></label>
         <input type="text" id="campaignName" placeholder="e.g. Winter Swimming Program 2026" oninput="updateProgress()">
-      </div>
-      <div class="field">
-        <label>Parent ACO brief reference <span class="tag tag-required">Required</span></label>
-        <input type="text" id="acoRef" placeholder="e.g. Confluence page title or brief ID" oninput="updateProgress()">
-        <div class="field-hint">This brief must sit downstream of an approved ACO brief. If no ACO brief exists, create one first.</div>
       </div>
       <div class="field">
         <label>Campaign owner</label>
@@ -1098,13 +1082,53 @@
 
 </div>
 
+<!-- KEY MODAL -->
+<div id="keyModal" style="display:none;position:fixed;inset:0;background:rgba(4,28,44,0.55);display:none;align-items:center;justify-content:center;z-index:200;" onclick="if(event.target===this)closeKeyModal()">
+  <div style="background:#fff;border-radius:12px;padding:32px 36px;max-width:420px;width:90%;box-shadow:0 24px 64px rgba(4,28,44,0.22);">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--cos-accessible-green);margin-bottom:8px;">Setup</div>
+    <div style="font-size:20px;font-weight:700;color:var(--cos-deep-blue);margin-bottom:8px;">Anthropic API key</div>
+    <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px;">Stored only in this browser. Sent directly to the Anthropic API — never to anyone else.</div>
+    <label style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px;display:block;">API key</label>
+    <input type="password" id="keyModalInput" placeholder="sk-ant-..." autocomplete="off" onkeydown="if(event.key==='Enter')saveKeyFromModal()"
+      style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;font-size:13px;font-family:monospace;color:var(--text-primary);outline:none;margin-bottom:16px;">
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="clearKey()" style="padding:9px 16px;border-radius:6px;border:1px solid var(--border);background:none;font-family:inherit;font-size:13px;cursor:pointer;color:var(--text-secondary);">Clear</button>
+      <button onclick="closeKeyModal()" style="padding:9px 16px;border-radius:6px;border:1px solid var(--border);background:none;font-family:inherit;font-size:13px;cursor:pointer;color:var(--text-secondary);">Cancel</button>
+      <button onclick="saveKeyFromModal()" style="padding:9px 16px;border-radius:6px;border:none;background:var(--cos-deep-blue);color:white;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;">Save key</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
   const MODEL = "claude-sonnet-4-20250514";
+  const LS_KEY = "cos_pmb_apikey";
 
   let selectedChannels = [];
   let selectedMetrics = [];
   let completedSections = new Set();
+
+  // ---- API KEY MANAGEMENT ----
+  function getKey() { return localStorage.getItem(LS_KEY) || ""; }
+  function saveKey(k) { localStorage.setItem(LS_KEY, k.trim()); updateKeyUI(); }
+  function clearKey() { localStorage.removeItem(LS_KEY); updateKeyUI(); closeKeyModal(); }
+  function updateKeyUI() {
+    const k = getKey();
+    document.getElementById("keyDot").className = "key-dot " + (k ? "set" : "unset");
+    document.getElementById("keyLabel").textContent = k ? "API key set" : "Set API key";
+  }
+  function openKeyModal() {
+    document.getElementById("keyModalInput").value = getKey();
+    document.getElementById("keyModal").style.display = "flex";
+    setTimeout(() => document.getElementById("keyModalInput").focus(), 50);
+  }
+  function closeKeyModal() { document.getElementById("keyModal").style.display = "none"; }
+  function saveKeyFromModal() {
+    const v = document.getElementById("keyModalInput").value.trim();
+    if (!v) { alert("Please enter an API key."); return; }
+    saveKey(v);
+    closeKeyModal();
+  }
 
   // ---- PROGRESS ----
   function updateProgress() {
@@ -1180,9 +1204,16 @@
 
   // ---- API CALL ----
   async function callClaude(systemPrompt, userMessage) {
+    const key = getKey();
+    if (!key) { openKeyModal(); throw new Error("No API key set."); }
     const response = await fetch(ANTHROPIC_API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 1000,
@@ -1191,6 +1222,7 @@
       })
     });
     const data = await response.json();
+    if (data.error) throw new Error(data.error.message || 'API error');
     return data.content?.[0]?.text || 'Unable to generate response.';
   }
 
@@ -1214,7 +1246,11 @@
 
     const msg = `Campaign objective submitted: "${obj}". Assess this objective. Is it specific enough to measure? Does it clearly define what success looks like? Should the team consider whether paid media is genuinely the right tool to achieve this, or whether owned/earned channels could do it? Challenge any vagueness directly.`;
 
-    const result = await callClaude(system, msg);
+    const result = await callClaude(system, msg).catch(err => {
+      setAIContent('objectiveAI', 'objectiveAIContent', `<span style="color:#dc2626;">Error: ${err.message}. Check your API key.</span>`);
+      return null;
+    });
+    if (!result) return;
     setAIContent('objectiveAI', 'objectiveAIContent', result.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
     completeSection(2);
   }
@@ -1231,7 +1267,11 @@
 
     const msg = `Audience: "${audience}". Channels being considered: ${channels}. Provide specific, current guidance on how to reach this audience using platform targeting. Flag any targeting limitations. Suggest any audience approaches this team may not have considered. Note: this is a local government context — there are restrictions on certain demographic targeting in political/social categories on Meta.`;
 
-    const result = await callClaude(system, msg);
+    const result = await callClaude(system, msg).catch(err => {
+      setAIContent('audienceAI', 'audienceAIContent', `<span style="color:#dc2626;">Error: ${err.message}. Check your API key.</span>`);
+      return null;
+    });
+    if (!result) return;
     setAIContent('audienceAI', 'audienceAIContent', result.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
     completeSection(3);
   }
@@ -1250,7 +1290,11 @@
 
     const msg = `Selected channels: ${selectedChannels.join(', ')}. Rationale given: "${rationale || 'none provided'}". Objective: "${objective}". Audience: "${audience}". Challenge this channel selection. Are these the right choices? Is Meta/Google being used by default? What's missing? What alternatives might outperform for this specific objective and audience in 2026? Note any channels that are particularly well-suited but not selected.`;
 
-    const result = await callClaude(system, msg);
+    const result = await callClaude(system, msg).catch(err => {
+      setAIContent('channelAI', 'channelAIContent', `<span style="color:#dc2626;">Error: ${err.message}. Check your API key.</span>`);
+      return null;
+    });
+    if (!result) return;
     setAIContent('channelAI', 'channelAIContent', result.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
     completeSection(4);
   }
@@ -1269,7 +1313,11 @@
 
     const msg = `Channels selected: ${selectedChannels.join(', ')}. Key message: "${keyMessage}". Formats described: "${formats || 'not specified'}". Native creative: "${nativeVal || 'not specified'}". Audience: "${document.getElementById('primaryAudience').value}". Provide specific 2026 creative best practice guidance for this channel mix. What formats are currently outperforming? What should government advertisers avoid? What does platform-native look like for this context specifically?`;
 
-    const result = await callClaude(system, msg);
+    const result = await callClaude(system, msg).catch(err => {
+      setAIContent('creativeAI', 'creativeAIContent', `<span style="color:#dc2626;">Error: ${err.message}. Check your API key.</span>`);
+      return null;
+    });
+    if (!result) return;
     setAIContent('creativeAI', 'creativeAIContent', result.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
     completeSection(5);
   }
@@ -1305,7 +1353,11 @@
 
     const msg = `Budget requested: ${budget}. Channels: ${selectedChannels.join(', ')}. Objective: "${document.getElementById('campaignObjective').value}". Audience: "${document.getElementById('primaryAudience').value}". Budget rationale given: "${rationale}". Is this budget justified? Is the rationale based on real reasoning or habit? Flag if the rationale is weak. Provide brief benchmark context on typical CPAs or CPCs for these channels for this type of campaign.`;
 
-    const budgetResult = await callClaude(system, msg);
+    const budgetResult = await callClaude(system, msg).catch(err => {
+      setAIContent('budgetAI', 'budgetAIContent', `<span style="color:#dc2626;">Error: ${err.message}. Check your API key.</span>`);
+      return null;
+    });
+    if (!budgetResult) return;
     setAIContent('budgetAI', 'budgetAIContent', budgetResult.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
 
     completedSections.add(7);
@@ -1325,7 +1377,6 @@
 
     const data = {
       campaign: document.getElementById('campaignName').value,
-      acoRef: document.getElementById('acoRef').value,
       owner: document.getElementById('campaignOwner').value,
       dates: document.getElementById('flightDates').value,
       objective: document.getElementById('campaignObjective').value,
@@ -1352,7 +1403,6 @@
     const msg = `Produce a complete paid media brief from this data:
 
 CAMPAIGN: ${data.campaign}
-ACO BRIEF REF: ${data.acoRef}
 OWNER: ${data.owner}
 DATES: ${data.dates}
 OBJECTIVE: ${data.objective}
@@ -1388,59 +1438,9 @@ Structure the brief with these sections: Campaign Overview, Strategic Context, A
     });
   }
 
-  // ── ACO ASSESSMENT HANDOFF ─────────────────────────────────────────────────
-  (function consumeHandoff() {
-    let handoff;
-    try {
-      const raw = localStorage.getItem("cos_pmb_handoff");
-      if (!raw) return;
-      handoff = JSON.parse(raw);
-      if (handoff.source !== "aco-assessment") return;
-      localStorage.removeItem("cos_pmb_handoff");
-    } catch(e) { return; }
-
-    const banner = document.getElementById("handoffBanner");
-    banner.style.display = "block";
-
-    document.getElementById("handoffTitle").textContent = handoff.campaignName || "Untitled brief";
-
-    const recEl = document.getElementById("handoffRec");
-    const recColours = { proceed: "#188838", proceed_conditions: "#d97706", reject: "#dc2626", defer: "#0850a1" };
-    const recLabels  = { proceed: "Approved to proceed", proceed_conditions: "Approved with conditions", reject: "Rejected", defer: "Deferred" };
-    const recCol = recColours[handoff.recommendation] || "#5a6472";
-    recEl.innerHTML = `<span style="display:inline-block;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;background:${recCol};color:white;">${recLabels[handoff.recommendation] || handoff.recommendation}</span>`;
-
-    document.getElementById("handoffSummary").textContent = handoff.briefSummary || "";
-
-    if (handoff.considerations?.length) {
-      document.getElementById("handoffConsiderations").style.display = "block";
-      document.getElementById("handoffCondList").innerHTML = handoff.considerations.map(c =>
-        `<div style="display:flex;gap:8px;align-items:flex-start;padding:3px 0;"><span style="color:#e07b00;flex-shrink:0;margin-top:2px;">&#9654;</span><span>${c}</span></div>`
-      ).join("");
-    }
-
-    if (handoff.campaignName) {
-      const el = document.getElementById("campaignName");
-      if (el) el.value = handoff.campaignName;
-    }
-
-    const acoEl = document.getElementById("acoRef");
-    if (acoEl && !acoEl.value) {
-      acoEl.value = `Assessed: "${handoff.campaignName}" — ${new Date(handoff.timestamp).toLocaleDateString("en-AU")}`;
-    }
-
-    if (handoff.audienceHints?.length) {
-      const audEl = document.getElementById("primaryAudience");
-      if (audEl && !audEl.value) audEl.value = handoff.audienceHints.join(" ");
-    }
-
-    const objEl = document.getElementById("campaignObjective");
-    if (objEl && !objEl.value && handoff.briefSummary) {
-      objEl.value = handoff.briefSummary;
-    }
-
-    updateProgress();
-  })();
+  updateProgress();
+  updateKeyUI();
+</script>
 </script>
 </body>
 </html>
