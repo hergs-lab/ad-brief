@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paid Media Brief Builder — City of Sydney</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --cos-deep-blue: #041c2c;
+    --cos-green: #2db84b;
+    --cos-accessible-green: #188838;
+    --cos-blue: #0850a1;
+    --cos-light: #f2ece7;
+    --cos-white: #ffffff;
+    --surface: #f7f5f2;
+    --border: #ddd8d2;
+    --text-primary: #041c2c;
+    --text-secondary: #4a5568;
+    --text-muted: #8a9ab0;
+    --ai-bg: #f0f7f2;
+    --ai-border: #188838;
+    --warning-bg: #fff8f0;
+    --warning-border: #e07b00;
+    --section-complete: #e8f5ec;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--cos-deep-blue);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(4,28,44,0.18);
+  }
+
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--cos-green);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-mark svg { width: 20px; height: 20px; }
+
+  .header-titles { flex: 1; }
+
+  .header-org {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cos-green);
+    margin-bottom: 2px;
+  }
+
+  .header-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--cos-white);
+    letter-spacing: -0.01em;
+  }
+
+  .header-badge {
+    background: rgba(45,184,75,0.15);
+    border: 1px solid rgba(45,184,75,0.3);
+    color: var(--cos-green);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+  }
+
+  /* PROGRESS */
+  .progress-bar {
+    background: var(--cos-deep-blue);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 0 32px 14px;
+  }
+
+  .progress-inner {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--cos-green);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .progress-steps {
+    display: flex;
+    gap: 0;
+  }
+
+  .progress-step {
+    font-size: 10px;
+    color: rgba(255,255,255,0.35);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    flex: 1;
+    transition: color 0.3s;
+  }
+
+  .progress-step.active { color: var(--cos-green); }
+  .progress-step.done { color: rgba(255,255,255,0.6); }
+
+  /* MAIN */
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+
+  /* SECTION */
+  .section {
+    background: var(--cos-white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .section.locked {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .section.complete {
+    border-color: var(--cos-accessible-green);
+  }
+
+  .section-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .section.open .section-header {
+    border-bottom-color: var(--border);
+  }
+
+  .section-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--cos-deep-blue);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .section.complete .section-number {
+    background: var(--cos-accessible-green);
+  }
+
+  .section-label {
+    flex: 1;
+  }
+
+  .section-label h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .section-label p {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .section-chevron {
+    color: var(--text-muted);
+    font-size: 18px;
+    transition: transform 0.2s;
+    line-height: 1;
+  }
+
+  .section.open .section-chevron { transform: rotate(180deg); }
+
+  .section-body {
+    display: none;
+    padding: 24px;
+  }
+
+  .section.open .section-body { display: block; }
+
+  /* FORM ELEMENTS */
+  .field {
+    margin-bottom: 20px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--cos-white);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: var(--cos-blue);
+    box-shadow: 0 0 0 3px rgba(8,80,161,0.08);
+  }
+
+  .field textarea { min-height: 80px; }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 5px;
+    line-height: 1.5;
+  }
+
+  /* CHANNEL SELECTOR */
+  .channel-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .channel-option {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .channel-option:hover {
+    border-color: var(--cos-blue);
+    background: rgba(8,80,161,0.04);
+  }
+
+  .channel-option.selected {
+    border-color: var(--cos-accessible-green);
+    background: rgba(24,136,56,0.06);
+  }
+
+  .channel-option input { display: none; }
+
+  .channel-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .channel-hint {
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.3;
+  }
+
+  /* AI PANEL */
+  .ai-panel {
+    background: var(--ai-bg);
+    border: 1px solid rgba(24,136,56,0.25);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-top: 16px;
+  }
+
+  .ai-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .ai-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--cos-accessible-green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .ai-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cos-accessible-green);
+  }
+
+  .ai-content {
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.65;
+  }
+
+  .ai-content p { margin-bottom: 8px; }
+  .ai-content p:last-child { margin-bottom: 0; }
+
+  .ai-thinking {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 12px;
+  }
+
+  /* WARNING PANEL */
+  .warning-panel {
+    background: var(--warning-bg);
+    border: 1px solid rgba(224,123,0,0.3);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #7a4500;
+    line-height: 1.6;
+  }
+
+  .warning-panel strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #e07b00;
+    margin-bottom: 5px;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-primary {
+    background: var(--cos-deep-blue);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #0a2f48;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(4,28,44,0.2);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--surface);
+  }
+
+  .btn-green {
+    background: var(--cos-accessible-green);
+    color: white;
+  }
+
+  .btn-green:hover {
+    background: #147530;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(24,136,56,0.25);
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 16px;
+  }
+
+  /* METRICS SELECTOR */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .metric-option {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .metric-option:hover { border-color: var(--cos-blue); background: rgba(8,80,161,0.04); }
+  .metric-option.selected { border-color: var(--cos-accessible-green); background: rgba(24,136,56,0.06); }
+  .metric-option input { display: none; }
+  .metric-name { font-size: 13px; font-weight: 500; display: block; margin-bottom: 1px; }
+  .metric-type { font-size: 10px; color: var(--text-muted); }
+  .metric-type.real { color: var(--cos-accessible-green); font-weight: 600; }
+  .metric-type.proxy { color: #e07b00; font-weight: 600; }
+
+  /* BRIEF OUTPUT */
+  .brief-output {
+    background: var(--cos-deep-blue);
+    border-radius: 12px;
+    padding: 32px;
+    margin-top: 24px;
+    display: none;
+  }
+
+  .brief-output.visible { display: block; }
+
+  .brief-output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .brief-output-title {
+    color: var(--cos-green);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .brief-content {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .copy-btn {
+    background: rgba(45,184,75,0.15);
+    border: 1px solid rgba(45,184,75,0.3);
+    color: var(--cos-green);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .copy-btn:hover { background: rgba(45,184,75,0.25); }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* INTRO CARD */
+  .intro-card {
+    background: var(--cos-deep-blue);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .intro-card::before {
+    content: '';
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 1px solid rgba(45,184,75,0.15);
+  }
+
+  .intro-card::after {
+    content: '';
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 1px solid rgba(45,184,75,0.1);
+  }
+
+  .intro-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cos-green);
+    margin-bottom: 8px;
+  }
+
+  .intro-heading {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--cos-white);
+    line-height: 1.3;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .intro-heading strong { font-weight: 600; }
+
+  .intro-body {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    max-width: 540px;
+  }
+
+  /* SPINNER */
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .tag-required { background: rgba(224,123,0,0.1); color: #c06000; }
+  .tag-optional { background: rgba(8,80,161,0.08); color: var(--cos-blue); }
+
+  .section-complete-badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--cos-accessible-green);
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-mark">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="8" stroke="#041c2c" stroke-width="1.5"/>
+        <circle cx="10" cy="10" r="4" fill="#041c2c"/>
+      </svg>
+    </div>
+    <div class="header-titles">
+      <div class="header-org">City of Sydney</div>
+      <div class="header-title">Paid Media Brief Builder</div>
+    </div>
+    <div class="header-badge">AI-assisted</div>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-inner">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-steps">
+        <div class="progress-step" id="ps1">Context</div>
+        <div class="progress-step" id="ps2">Objective</div>
+        <div class="progress-step" id="ps3">Audience</div>
+        <div class="progress-step" id="ps4">Channels</div>
+        <div class="progress-step" id="ps5">Creative</div>
+        <div class="progress-step" id="ps6">Measurement</div>
+        <div class="progress-step" id="ps7">Budget</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- HANDOFF BANNER (shown when arriving from assessment tool) -->
+  <div id="handoffBanner" style="display:none; background:#f0f7f2; border:1px solid rgba(24,136,56,0.3); border-radius:12px; padding:20px 24px; margin-bottom:20px;">
+    <div style="display:flex; align-items:flex-start; gap:14px;">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--cos-accessible-green);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cos-accessible-green);margin-bottom:4px;">Loaded from ACO Brief Assessment</div>
+        <div id="handoffTitle" style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:4px;"></div>
+        <div id="handoffRec" style="font-size:12px;margin-bottom:8px;"></div>
+        <div id="handoffSummary" style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:10px;"></div>
+        <div id="handoffConsiderations" style="display:none;">
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Conditions from assessment</div>
+          <div id="handoffCondList" style="font-size:13px;color:var(--text-secondary);line-height:1.8;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="intro-card">
+    <div class="intro-eyebrow">Downstream of your ACO brief</div>
+    <div class="intro-heading">Before you spend a dollar,<br><strong>brief it properly.</strong></div>
+    <div class="intro-body">This tool works through each element of a paid media campaign with you, challenges your assumptions, surfaces current best practice, and flags where alternatives to paid advertising might serve you better. Complete all sections to generate a brief ready for Confluence.</div>
+  </div>
+
+  <!-- SECTION 1: CONTEXT -->
+  <div class="section open" id="sec1">
+    <div class="section-header" onclick="toggleSection('sec1')">
+      <div class="section-number">1</div>
+      <div class="section-label">
+        <h3>Campaign context</h3>
+        <p>Link this to your approved ACO brief</p>
+      </div>
+      <div class="section-chevron">&#8964;</div>
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <label>Campaign name <span class="tag tag-required">Required</span></label>
+        <input type="text" id="campaignName" placeholder="e.g. Winter Swimming Program 2026" oninput="updateProgress()">
+      </div>
+      <div class="field">
+        <label>Parent ACO brief reference <span class="tag tag-required">Required</span></label>
+        <input type="text" id="acoRef" placeholder="e.g. Confluence page title or brief ID" oninput="updateProgress()">
+        <div class="field-hint">This brief must sit downstream of an approved ACO brief. If no ACO brief exists, create one first.</div>
+      </div>
+      <div class="field">
+        <label>Campaign owner</label>
+        <input type="text" id="campaignOwner" placeholder="Name and team">
+      </div>
+      <div class="field">
+        <label>Proposed flight dates</label>
+        <input type="text" id="flightDates" placeholder="e.g. 1 June – 31 July 2026">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="completeSection(1)">Confirm and continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: OBJECTIVE -->
+  <div class="section locked" id="sec2">
+    <div class="section-header" onclick="toggleSection('sec2')">
+      <div class="section-number">2</div>
+      <div class="section-label">
+        <h3>Campaign objective</h3>
+        <p>What does success look like?</p>
+      </div>
+      <div class="section-chevron">&#8964;</div>
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <label>What is the single objective of this campaign? <span class="tag tag-required">Required</span></label>
+        <textarea id="campaignObjective" placeholder="Write one clear sentence. e.g. Drive registrations for the Winter Swimming Program among residents aged 25–45 in the inner city." oninput="onObjectiveInput()"></textarea>
+        <div class="field-hint">One sentence. If you need two sentences, you have two objectives — pick one.</div>
+      </div>
+
+      <div class="ai-panel" id="objectiveAI" style="display:none;">
+        <div class="ai-panel-header">
+          <div class="ai-dot"></div>
+          <div class="ai-label">AI analysis</div>
+        </div>
+        <div class="ai-content" id="objectiveAIContent"><span class="ai-thinking">Analysing your objective...</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label>Do you have owned or earned channels that could achieve this objective without paid media?</label>
+        <select id="ownedChannels" onchange="checkOwnedChannels()">
+          <option value="">Select...</option>
+          <option value="no">No — our owned channels don't reach this audience effectively</option>
+          <option value="partial">Partially — owned channels exist but reach is insufficient</option>
+          <option value="yes">Yes — but we want additional reach on top</option>
+          <option value="unsure">I haven't assessed this</option>
+        </select>
+      </div>
+
+      <div id="ownedChannelsWarning" style="display:none;">
+        <div class="warning-panel">
+          <strong>Consider this before proceeding</strong>
+          You've indicated owned or earned channels could achieve this. Before committing paid budget, document why those channels are insufficient. Decision-makers will ask. If the honest answer is "we haven't tested it," that's worth knowing now rather than after spending $20k.
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="analyseObjectiveAndContinue()">Analyse and continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: AUDIENCE -->
+  <div class="section locked" id="sec3">
+    <div class="section-header" onclick="toggleSection('sec3')">
+      <div class="section-number">3</div>
+      <div class="section-label">
+        <h3>Target audience</h3>
+        <p>Lifted from your ACO brief — not reinvented here</p>
+      </div>
+      <div class="section-chevron">&#8964;</div>
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <label>Primary audience (from ACO brief) <span class="tag tag-required">Required</span></label>
+        <textarea id="primaryAudience" placeholder="Describe the specific audience segment this campaign targets. Include relevant demographics, behaviours, or psychographics from your ACO brief." style="min-height:70px;" oninput="updateProgress()"></textarea>
+      </div>
+      <div class="field">
+        <label>Secondary audience <span class="tag tag-optional">Optional</span></label>
+        <textarea id="secondaryAudience" placeholder="Only include if genuinely distinct in how you'd reach or message them." style="min-height:60px;"></textarea>
+      </div>
+      <div class="field">
+        <label>Geographic targeting</label>
+        <input type="text" id="geoTargeting" placeholder="e.g. City of Sydney LGA, inner suburbs, specific postcodes">
+      </div>
+
+      <div class="ai-panel" id="audienceAI" style="display:none;">
+        <div class="ai-panel-header">
+          <div class="ai-dot"></div>
+          <div class="ai-label">AI — platform targeting guidance</div>
+        </div>
+        <div class="ai-content" id="audienceAIContent"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="analyseAudienceAndContinue()">Get targeting guidance and continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: CHANNELS -->
+  <div class="section locked" id="sec4">
+    <div class="section-header" onclick="toggleSection('sec4')">
+      <div class="section-number">4</div>
+      <div class="section-label">
+        <h3>Channel selection</h3>
+        <p>Justify every channel — don't default to habit</p>
+      </div>
+      <div class="section-chevron">&#8964;</div>
+    </div>
+    <div class="section-body">
+
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.6;">Select only channels you can justify against this audience and objective. You'll be asked to justify each one. If you're selecting Meta and Google by default, the AI will challenge you.</p>
+
+      <div class="field">
+        <label>Select channels <span class="tag tag-required">Required</span></label>
+        <div class="channel-grid">
+          <label class="channel-option" onclick="toggleChannel(this, 'meta')">
+            <input type="checkbox" value="meta">
+            <span class="channel-name">Meta (FB/IG)</span>
+            <span class="channel-hint">Facebook & Instagram paid</span>
+          </label>
+          <label class="channel-option" onclick="toggleChannel(this, 'google')">
+            <input type="checkbox" value="google">
+            <span class="channel-name">Google Search</span>
+            <span class="channel-hint">Intent-based search ads</span>
+          </label>
+          <label class="channel-option" onclick="toggleChannel(this, 'youtube')">
+            <input type="checkbox" value="youtube">
+            <span class="channel-name">YouTube</span>
+            <span class="channel-hint">Pre-roll, skippable, bumpers</span>
+          </label>
+          <label class="channel-option" onclick="toggleChannel(this, 'display')">
+            <input type="checkbox" value="display">
+            <span class="channel-name">Programmatic display</span>
+            <span class="channel-hint">Network / DSP-based display</span>
+          </label>
+          <label class="channel-option" onclick="toggleChannel(this, 'linkedin')">
+            <input type="checkbox" value="linkedin">
+            <span class="channel-name">LinkedIn</span>
+            <span class="channel-hint">B2B or professional segments</span>
+          </label>
+          <label class="channel-option" onclick="toggleChannel(this, 'tiktok')">
+            <input type="checkbox" value="tiktok">
+            <span class="channel-name">TikTok</span>
+            <span class="channel-hint">Under-35 reach, video-first</span>
+          </label>
+          <label class="channel-option" onclick="toggleChannel(this, 'ooh')">
+            <input type="checkbox" value="ooh">
+            <span class="channel-name">Digital OOH</span>
+            <span class="channel-hint">Screens, transit, street</span>
+          </label>
+          <label class="channel-option" onclick="toggleChannel(this, 'reddit')">
+            <input type="checkbox" value="reddit">
+            <span class="channel-name">Reddit</span>
+            <span class="channel-hint">Community / interest targeting</span>
+          </label>
+          <label class="channel-option" onclick="toggleChannel(this, 'sem')">
+            <input type="checkbox" value="sem">
+            <span class="channel-name">Google Display</span>
+            <span class="channel-hint">GDN contextual / audience</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Rationale for selected channels</label>
+        <textarea id="channelRationale" placeholder="Explain why each selected channel is right for this audience and objective. If the answer is 'we've always used it,' reconsider." style="min-height:80px;"></textarea>
+      </div>
+
+      <div class="ai-panel" id="channelAI" style="display:none;">
+        <div class="ai-panel-header">
+          <div class="ai-dot"></div>
+          <div class="ai-label">AI — channel challenge</div>
+        </div>
+        <div class="ai-content" id="channelAIContent"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="analyseChannelsAndContinue()">Challenge my channel selection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: CREATIVE -->
+  <div class="section locked" id="sec5">
+    <div class="section-header" onclick="toggleSection('sec5')">
+      <div class="section-number">5</div>
+      <div class="section-label">
+        <h3>Creative approach</h3>
+        <p>Platform-native or expensive and ineffective</p>
+      </div>
+      <div class="section-chevron">&#8964;</div>
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <label>Key message <span class="tag tag-required">Required</span></label>
+        <textarea id="keyMessage" placeholder="What do you need your audience to think, feel, or do? One clear statement." style="min-height:60px;" oninput="updateProgress()"></textarea>
+      </div>
+      <div class="field">
+        <label>Call to action</label>
+        <input type="text" id="cta" placeholder="e.g. Register now at cityofsydney.nsw.gov.au/swimming">
+      </div>
+      <div class="field">
+        <label>Creative format per channel</label>
+        <textarea id="creativeFormats" placeholder="List each channel and the intended format. e.g. Instagram: Reels 9:16 (15s), Stories static; Google: responsive search ads 3 headlines..." style="min-height:80px;"></textarea>
+      </div>
+      <div class="field">
+        <label>Is creative being produced specifically for each platform? <span class="tag tag-required">Required</span></label>
+        <select id="creativeNative" onchange="checkCreativeNative()">
+          <option value="">Select...</option>
+          <option value="yes">Yes — platform-native assets for each channel</option>
+          <option value="adapted">Partially — adapting existing assets</option>
+          <option value="no">No — repurposing print or other assets</option>
+          <option value="unsure">Not yet decided</option>
+        </select>
+      </div>
+
+      <div id="creativeWarning" style="display:none;">
+        <div class="warning-panel">
+          <strong>Performance risk</strong>
+          Repurposed or adapted creative performs significantly worse than platform-native creative. Meta and TikTok algorithms actively penalise content that looks like an ad. You will pay more per result. If production budget is the constraint, consider running fewer channels with better creative rather than more channels with poor creative.
+        </div>
+      </div>
+
+      <div class="ai-panel" id="creativeAI" style="display:none;">
+        <div class="ai-panel-header">
+          <div class="ai-dot"></div>
+          <div class="ai-label">AI — creative best practice 2026</div>
+        </div>
+        <div class="ai-content" id="creativeAIContent"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="analyseCreativeAndContinue()">Get creative guidance and continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: MEASUREMENT -->
+  <div class="section locked" id="sec6">
+    <div class="section-header" onclick="toggleSection('sec6')">
+      <div class="section-number">6</div>
+      <div class="section-label">
+        <h3>Measurement and tracking</h3>
+        <p>Reach is not a result</p>
+      </div>
+      <div class="section-chevron">&#8964;</div>
+    </div>
+    <div class="section-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.6;">Engagement and page views are proxies. Select the metrics that actually connect spend to outcomes. At least one conversion metric is required to proceed.</p>
+
+      <div class="field">
+        <label>Primary success metrics <span class="tag tag-required">At least one conversion metric required</span></label>
+        <div class="metrics-grid">
+          <label class="metric-option" onclick="toggleMetric(this)">
+            <input type="checkbox" value="registrations">
+            <span class="metric-name">Registrations / sign-ups</span>
+            <span class="metric-type real">Conversion</span>
+          </label>
+          <label class="metric-option" onclick="toggleMetric(this)">
+            <input type="checkbox" value="form_completions">
+            <span class="metric-name">Form completions</span>
+            <span class="metric-type real">Conversion</span>
+          </label>
+          <label class="metric-option" onclick="toggleMetric(this)">
+            <input type="checkbox" value="bookings">
+            <span class="metric-name">Bookings / transactions</span>
+            <span class="metric-type real">Conversion</span>
+          </label>
+          <label class="metric-option" onclick="toggleMetric(this)">
+            <input type="checkbox" value="survey_completions">
+            <span class="metric-name">Survey / consultation responses</span>
+            <span class="metric-type real">Conversion</span>
+          </label>
+          <label class="metric-option" onclick="toggleMetric(this)">
+            <input type="checkbox" value="downloads">
+            <span class="metric-name">Document / resource downloads</span>
+            <span class="metric-type real">Conversion</span>
+          </label>
+          <label class="metric-option" onclick="toggleMetric(this)">
+            <input type="checkbox" value="cpc">
+            <span class="metric-name">Cost per click (CPC)</span>
+            <span class="metric-type proxy">Proxy only</span>
+          </label>
+          <label class="metric-option" onclick="toggleMetric(this)">
+            <input type="checkbox" value="reach">
+            <span class="metric-name">Reach / impressions</span>
+            <span class="metric-type proxy">Proxy only</span>
+          </label>
+          <label class="metric-option" onclick="toggleMetric(this)">
+            <input type="checkbox" value="engagement">
+            <span class="metric-name">Engagement rate</span>
+            <span class="metric-type proxy">Proxy only</span>
+          </label>
+        </div>
+        <div id="metricsWarning" style="display:none;" class="warning-panel" style="margin-top:10px;">
+          <strong>No conversion metric selected</strong>
+          You've selected proxy metrics only. These tell you your ad was seen or clicked — not whether it achieved anything. Add at least one conversion metric before proceeding.
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tracking configuration <span class="tag tag-required">Required</span></label>
+        <select id="trackingConfig" onchange="checkTracking()">
+          <option value="">Select...</option>
+          <option value="confirmed">Confirmed — pixel/tag/GA4 conversion events are live and tested</option>
+          <option value="inprogress">In progress — being set up before campaign launches</option>
+          <option value="no">Not in place</option>
+          <option value="unsure">Unknown</option>
+        </select>
+      </div>
+
+      <div id="trackingWarning" style="display:none;">
+        <div class="warning-panel">
+          <strong>Campaign should not launch without this</strong>
+          Running paid media without conversion tracking means you cannot report on effectiveness, cannot optimise spend, and cannot defend the budget. This is a hard requirement. The campaign must not launch until tracking is confirmed and tested. Assign an owner and a date.
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tracking owner and confirmation date</label>
+        <input type="text" id="trackingOwner" placeholder="e.g. Digital team — confirmed by 20 May 2026">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="measurementContinueBtn" onclick="completeMeasurement()">Confirm and continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: BUDGET -->
+  <div class="section locked" id="sec7">
+    <div class="section-header" onclick="toggleSection('sec7')">
+      <div class="section-number">7</div>
+      <div class="section-label">
+        <h3>Budget</h3>
+        <p>Reasoned, not inherited</p>
+      </div>
+      <div class="section-chevron">&#8964;</div>
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <label>Total requested budget <span class="tag tag-required">Required</span></label>
+        <input type="text" id="totalBudget" placeholder="e.g. $8,000" oninput="updateProgress()">
+      </div>
+      <div class="field">
+        <label>Budget breakdown by channel</label>
+        <textarea id="budgetBreakdown" placeholder="e.g. Meta: $3,500 | Google Search: $2,500 | Creative production: $2,000" style="min-height:70px;"></textarea>
+      </div>
+      <div class="field">
+        <label>How was this budget arrived at? <span class="tag tag-required">Required</span></label>
+        <textarea id="budgetRationale" placeholder="Explain the rationale. e.g. Based on target of 500 registrations at estimated CPA of $12 from previous similar campaigns, plus production cost." style="min-height:80px;" oninput="updateProgress()"></textarea>
+        <div class="field-hint">If the answer is "same as last time" or "it's what's in the budget," this field will flag that. The number must be justified against the objective.</div>
+      </div>
+
+      <div class="ai-panel" id="budgetAI" style="display:none;">
+        <div class="ai-panel-header">
+          <div class="ai-dot"></div>
+          <div class="ai-label">AI — budget assessment</div>
+        </div>
+        <div class="ai-content" id="budgetAIContent"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="analyseBudgetAndGenerate()">Analyse budget and generate brief</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRIEF OUTPUT -->
+  <div class="brief-output" id="briefOutput">
+    <div class="brief-output-header">
+      <div class="brief-output-title">Generated paid media brief</div>
+      <button class="copy-btn" onclick="copyBrief()">Copy to clipboard</button>
+    </div>
+    <div class="brief-content" id="briefContent"></div>
+  </div>
+
+</div>
+
+<script>
+  const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
+  const MODEL = "claude-sonnet-4-20250514";
+
+  let selectedChannels = [];
+  let selectedMetrics = [];
+  let completedSections = new Set();
+
+  // ---- PROGRESS ----
+  function updateProgress() {
+    const total = 7;
+    const done = completedSections.size;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    for (let i = 1; i <= 7; i++) {
+      const el = document.getElementById('ps' + i);
+      if (completedSections.has(i)) { el.className = 'progress-step done'; }
+      else if (i === done + 1) { el.className = 'progress-step active'; }
+      else { el.className = 'progress-step'; }
+    }
+  }
+
+  // ---- SECTIONS ----
+  function toggleSection(id) {
+    const sec = document.getElementById(id);
+    if (sec.classList.contains('locked')) return;
+    sec.classList.toggle('open');
+  }
+
+  function unlockSection(num) {
+    const sec = document.getElementById('sec' + num);
+    sec.classList.remove('locked');
+    sec.classList.add('open');
+    setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  }
+
+  function completeSection(num) {
+    const sec = document.getElementById('sec' + num);
+    sec.classList.add('complete');
+    sec.classList.remove('open');
+    completedSections.add(num);
+    updateProgress();
+    if (num < 7) unlockSection(num + 1);
+  }
+
+  // ---- TOGGLES ----
+  function toggleChannel(el, val) {
+    el.classList.toggle('selected');
+    const idx = selectedChannels.indexOf(val);
+    if (idx > -1) selectedChannels.splice(idx, 1);
+    else selectedChannels.push(val);
+  }
+
+  function toggleMetric(el) {
+    el.classList.toggle('selected');
+    const val = el.querySelector('input').value;
+    const idx = selectedMetrics.indexOf(val);
+    if (idx > -1) selectedMetrics.splice(idx, 1);
+    else selectedMetrics.push(val);
+  }
+
+  // ---- OWNED CHANNELS ----
+  function checkOwnedChannels() {
+    const val = document.getElementById('ownedChannels').value;
+    const w = document.getElementById('ownedChannelsWarning');
+    w.style.display = (val === 'yes' || val === 'unsure') ? 'block' : 'none';
+  }
+
+  function checkCreativeNative() {
+    const val = document.getElementById('creativeNative').value;
+    const w = document.getElementById('creativeWarning');
+    w.style.display = (val === 'no' || val === 'adapted') ? 'block' : 'none';
+  }
+
+  function checkTracking() {
+    const val = document.getElementById('trackingConfig').value;
+    const w = document.getElementById('trackingWarning');
+    w.style.display = (val === 'no' || val === 'unsure') ? 'block' : 'none';
+  }
+
+  // ---- API CALL ----
+  async function callClaude(systemPrompt, userMessage) {
+    const response = await fetch(ANTHROPIC_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+    const data = await response.json();
+    return data.content?.[0]?.text || 'Unable to generate response.';
+  }
+
+  function setAIContent(panelId, contentId, html) {
+    document.getElementById(panelId).style.display = 'block';
+    document.getElementById(contentId).innerHTML = html;
+  }
+
+  // ---- SECTION 2: OBJECTIVE ----
+  function onObjectiveInput() {
+    updateProgress();
+  }
+
+  async function analyseObjectiveAndContinue() {
+    const obj = document.getElementById('campaignObjective').value.trim();
+    if (!obj) { alert('Please enter a campaign objective.'); return; }
+
+    setAIContent('objectiveAI', 'objectiveAIContent', '<span class="ai-thinking">Analysing your objective...</span>');
+
+    const system = `You are a senior paid media strategist reviewing campaign briefs for a local government communications team. Your job is to challenge vague objectives, ensure objectives are specific and measurable, and ask whether paid media is genuinely the right approach. Be direct, concise, and useful. Respond in plain paragraphs — no bullet lists, no headers. Maximum 3 short paragraphs.`;
+
+    const msg = `Campaign objective submitted: "${obj}". Assess this objective. Is it specific enough to measure? Does it clearly define what success looks like? Should the team consider whether paid media is genuinely the right tool to achieve this, or whether owned/earned channels could do it? Challenge any vagueness directly.`;
+
+    const result = await callClaude(system, msg);
+    setAIContent('objectiveAI', 'objectiveAIContent', result.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
+    completeSection(2);
+  }
+
+  // ---- SECTION 3: AUDIENCE ----
+  async function analyseAudienceAndContinue() {
+    const audience = document.getElementById('primaryAudience').value.trim();
+    if (!audience) { alert('Please describe your primary audience.'); return; }
+
+    const channels = selectedChannels.join(', ') || 'not yet selected';
+    setAIContent('audienceAI', 'audienceAIContent', '<span class="ai-thinking">Generating platform targeting guidance...</span>');
+
+    const system = `You are a paid media strategist with deep knowledge of 2026 platform capabilities and targeting options. You advise local government communications teams. Be practical and specific. Reference actual platform targeting capabilities. Maximum 4 short paragraphs — no bullet lists.`;
+
+    const msg = `Audience: "${audience}". Channels being considered: ${channels}. Provide specific, current guidance on how to reach this audience using platform targeting. Flag any targeting limitations. Suggest any audience approaches this team may not have considered. Note: this is a local government context — there are restrictions on certain demographic targeting in political/social categories on Meta.`;
+
+    const result = await callClaude(system, msg);
+    setAIContent('audienceAI', 'audienceAIContent', result.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
+    completeSection(3);
+  }
+
+  // ---- SECTION 4: CHANNELS ----
+  async function analyseChannelsAndContinue() {
+    if (selectedChannels.length === 0) { alert('Please select at least one channel.'); return; }
+
+    const rationale = document.getElementById('channelRationale').value.trim();
+    const objective = document.getElementById('campaignObjective').value.trim();
+    const audience = document.getElementById('primaryAudience').value.trim();
+
+    setAIContent('channelAI', 'channelAIContent', '<span class="ai-thinking">Challenging your channel selection...</span>');
+
+    const system = `You are a senior paid media strategist. Your job is to challenge channel selections that are driven by habit rather than strategy — particularly over-reliance on Meta and Google. You should also proactively suggest channels this team hasn't considered that might be more effective for their objective and audience. You know current 2026 platform performance benchmarks, algorithm changes, and best practices. Be direct and constructive. 3-4 paragraphs maximum.`;
+
+    const msg = `Selected channels: ${selectedChannels.join(', ')}. Rationale given: "${rationale || 'none provided'}". Objective: "${objective}". Audience: "${audience}". Challenge this channel selection. Are these the right choices? Is Meta/Google being used by default? What's missing? What alternatives might outperform for this specific objective and audience in 2026? Note any channels that are particularly well-suited but not selected.`;
+
+    const result = await callClaude(system, msg);
+    setAIContent('channelAI', 'channelAIContent', result.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
+    completeSection(4);
+  }
+
+  // ---- SECTION 5: CREATIVE ----
+  async function analyseCreativeAndContinue() {
+    const keyMessage = document.getElementById('keyMessage').value.trim();
+    if (!keyMessage) { alert('Please enter your key message.'); return; }
+
+    const formats = document.getElementById('creativeFormats').value.trim();
+    const nativeVal = document.getElementById('creativeNative').value;
+
+    setAIContent('creativeAI', 'creativeAIContent', '<span class="ai-thinking">Loading 2026 creative best practice...</span>');
+
+    const system = `You are a creative strategist specialising in platform-native content for paid media in 2026. You know exactly what creative approaches are currently performing well on each platform, what formats the algorithms reward, and what makes government advertising fail. Be specific and practical. 3-4 paragraphs. No bullet lists.`;
+
+    const msg = `Channels selected: ${selectedChannels.join(', ')}. Key message: "${keyMessage}". Formats described: "${formats || 'not specified'}". Native creative: "${nativeVal || 'not specified'}". Audience: "${document.getElementById('primaryAudience').value}". Provide specific 2026 creative best practice guidance for this channel mix. What formats are currently outperforming? What should government advertisers avoid? What does platform-native look like for this context specifically?`;
+
+    const result = await callClaude(system, msg);
+    setAIContent('creativeAI', 'creativeAIContent', result.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
+    completeSection(5);
+  }
+
+  // ---- SECTION 6: MEASUREMENT ----
+  function completeMeasurement() {
+    const conversionMetrics = ['registrations','form_completions','bookings','survey_completions','downloads'];
+    const hasConversion = selectedMetrics.some(m => conversionMetrics.includes(m));
+
+    if (!hasConversion) {
+      document.getElementById('metricsWarning').style.display = 'block';
+      return;
+    }
+
+    const tracking = document.getElementById('trackingConfig').value;
+    if (tracking === 'no' || tracking === 'unsure') {
+      if (!confirm('Tracking is not confirmed. The campaign should not launch without it. Do you want to proceed with this flagged?')) return;
+    }
+
+    completeSection(6);
+  }
+
+  // ---- SECTION 7: BUDGET ----
+  async function analyseBudgetAndGenerate() {
+    const budget = document.getElementById('totalBudget').value.trim();
+    const rationale = document.getElementById('budgetRationale').value.trim();
+
+    if (!budget || !rationale) { alert('Please enter budget and rationale.'); return; }
+
+    setAIContent('budgetAI', 'budgetAIContent', '<span class="ai-thinking">Assessing budget rationale...</span>');
+
+    const system = `You are a paid media strategist reviewing budget justifications for a local government team operating under financial sustainability scrutiny. Challenge budgets that are based on precedent rather than reasoning. Validate budgets that are well-justified. Provide brief benchmark context where helpful. 2-3 paragraphs maximum.`;
+
+    const msg = `Budget requested: ${budget}. Channels: ${selectedChannels.join(', ')}. Objective: "${document.getElementById('campaignObjective').value}". Audience: "${document.getElementById('primaryAudience').value}". Budget rationale given: "${rationale}". Is this budget justified? Is the rationale based on real reasoning or habit? Flag if the rationale is weak. Provide brief benchmark context on typical CPAs or CPCs for these channels for this type of campaign.`;
+
+    const budgetResult = await callClaude(system, msg);
+    setAIContent('budgetAI', 'budgetAIContent', budgetResult.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
+
+    completedSections.add(7);
+    updateProgress();
+
+    // Generate final brief
+    await generateBrief();
+  }
+
+  // ---- GENERATE BRIEF ----
+  async function generateBrief() {
+    const briefOutput = document.getElementById('briefOutput');
+    briefOutput.classList.add('visible');
+    document.getElementById('briefContent').textContent = 'Generating your brief...';
+
+    setTimeout(() => briefOutput.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+    const data = {
+      campaign: document.getElementById('campaignName').value,
+      acoRef: document.getElementById('acoRef').value,
+      owner: document.getElementById('campaignOwner').value,
+      dates: document.getElementById('flightDates').value,
+      objective: document.getElementById('campaignObjective').value,
+      ownedChannels: document.getElementById('ownedChannels').value,
+      audience: document.getElementById('primaryAudience').value,
+      secondaryAudience: document.getElementById('secondaryAudience').value,
+      geo: document.getElementById('geoTargeting').value,
+      channels: selectedChannels.join(', '),
+      channelRationale: document.getElementById('channelRationale').value,
+      keyMessage: document.getElementById('keyMessage').value,
+      cta: document.getElementById('cta').value,
+      creativeFormats: document.getElementById('creativeFormats').value,
+      creativeNative: document.getElementById('creativeNative').value,
+      metrics: selectedMetrics.join(', '),
+      tracking: document.getElementById('trackingConfig').value,
+      trackingOwner: document.getElementById('trackingOwner').value,
+      budget: document.getElementById('totalBudget').value,
+      budgetBreakdown: document.getElementById('budgetBreakdown').value,
+      budgetRationale: document.getElementById('budgetRationale').value
+    };
+
+    const system = `You produce structured paid media briefs for Confluence. Output a clean, well-structured brief in plain text with clear section headers using === and ---. No markdown symbols like ** or ##. Write in plain professional English. Include a brief AI summary note at the end flagging any risks or gaps identified during the briefing process.`;
+
+    const msg = `Produce a complete paid media brief from this data:
+
+CAMPAIGN: ${data.campaign}
+ACO BRIEF REF: ${data.acoRef}
+OWNER: ${data.owner}
+DATES: ${data.dates}
+OBJECTIVE: ${data.objective}
+OWNED CHANNELS ASSESSED: ${data.ownedChannels}
+PRIMARY AUDIENCE: ${data.audience}
+SECONDARY AUDIENCE: ${data.secondaryAudience}
+GEOGRAPHIC TARGETING: ${data.geo}
+CHANNELS: ${data.channels}
+CHANNEL RATIONALE: ${data.channelRationale}
+KEY MESSAGE: ${data.keyMessage}
+CALL TO ACTION: ${data.cta}
+CREATIVE FORMATS: ${data.creativeFormats}
+PLATFORM-NATIVE CREATIVE: ${data.creativeNative}
+SUCCESS METRICS: ${data.metrics}
+TRACKING STATUS: ${data.tracking}
+TRACKING OWNER: ${data.trackingOwner}
+BUDGET: ${data.budget}
+BUDGET BREAKDOWN: ${data.budgetBreakdown}
+BUDGET RATIONALE: ${data.budgetRationale}
+
+Structure the brief with these sections: Campaign Overview, Strategic Context, Audience, Channel Strategy, Creative Approach, Measurement Framework, Budget. End with a section called "Flags and Risks" that honestly notes any gaps, weak justifications, or items requiring resolution before launch.`;
+
+    const result = await callClaude(system, msg);
+    document.getElementById('briefContent').textContent = result;
+  }
+
+  function copyBrief() {
+    const text = document.getElementById('briefContent').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy to clipboard', 2000);
+    });
+  }
+
+  // ── ACO ASSESSMENT HANDOFF ─────────────────────────────────────────────────
+  (function consumeHandoff() {
+    let handoff;
+    try {
+      const raw = localStorage.getItem("cos_pmb_handoff");
+      if (!raw) return;
+      handoff = JSON.parse(raw);
+      if (handoff.source !== "aco-assessment") return;
+      localStorage.removeItem("cos_pmb_handoff");
+    } catch(e) { return; }
+
+    const banner = document.getElementById("handoffBanner");
+    banner.style.display = "block";
+
+    document.getElementById("handoffTitle").textContent = handoff.campaignName || "Untitled brief";
+
+    const recEl = document.getElementById("handoffRec");
+    const recColours = { proceed: "#188838", proceed_conditions: "#d97706", reject: "#dc2626", defer: "#0850a1" };
+    const recLabels  = { proceed: "Approved to proceed", proceed_conditions: "Approved with conditions", reject: "Rejected", defer: "Deferred" };
+    const recCol = recColours[handoff.recommendation] || "#5a6472";
+    recEl.innerHTML = `<span style="display:inline-block;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;background:${recCol};color:white;">${recLabels[handoff.recommendation] || handoff.recommendation}</span>`;
+
+    document.getElementById("handoffSummary").textContent = handoff.briefSummary || "";
+
+    if (handoff.considerations?.length) {
+      document.getElementById("handoffConsiderations").style.display = "block";
+      document.getElementById("handoffCondList").innerHTML = handoff.considerations.map(c =>
+        `<div style="display:flex;gap:8px;align-items:flex-start;padding:3px 0;"><span style="color:#e07b00;flex-shrink:0;margin-top:2px;">&#9654;</span><span>${c}</span></div>`
+      ).join("");
+    }
+
+    if (handoff.campaignName) {
+      const el = document.getElementById("campaignName");
+      if (el) el.value = handoff.campaignName;
+    }
+
+    const acoEl = document.getElementById("acoRef");
+    if (acoEl && !acoEl.value) {
+      acoEl.value = `Assessed: "${handoff.campaignName}" — ${new Date(handoff.timestamp).toLocaleDateString("en-AU")}`;
+    }
+
+    if (handoff.audienceHints?.length) {
+      const audEl = document.getElementById("primaryAudience");
+      if (audEl && !audEl.value) audEl.value = handoff.audienceHints.join(" ");
+    }
+
+    const objEl = document.getElementById("campaignObjective");
+    if (objEl && !objEl.value && handoff.briefSummary) {
+      objEl.value = handoff.briefSummary;
+    }
+
+    updateProgress();
+  })();
+</script>
+</body>
+</html>
