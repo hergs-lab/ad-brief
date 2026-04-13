@@ -629,6 +629,54 @@
   .tag-required { background: rgba(224,123,0,0.1); color: #c06000; }
   .tag-optional { background: rgba(8,80,161,0.08); color: var(--cos-blue); }
 
+  /* CHANNEL CARDS */
+  .channel-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .channel-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--cos-deep-blue);
+  }
+  .channel-card-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    flex: 1;
+    letter-spacing: 0.02em;
+  }
+  .channel-card-verdict {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 4px;
+  }
+  .verdict-good { background: rgba(24,136,56,0.25); color: #4ade80; }
+  .verdict-caution { background: rgba(224,123,0,0.25); color: #fbbf24; }
+  .verdict-avoid { background: rgba(220,38,38,0.25); color: #fca5a5; }
+  .channel-card-body {
+    padding: 14px 16px;
+    background: white;
+  }
+  .channel-card-body .ai-content { font-size: 13px; }
+  .channel-card-loading {
+    padding: 14px 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .section-complete-badge {
     font-size: 10px;
     font-weight: 600;
@@ -769,14 +817,14 @@
       <div class="section-number">3</div>
       <div class="section-label">
         <h3>Target audience</h3>
-        <p>Lifted from your ACO brief — not reinvented here</p>
+        <p>Who specifically, and how to reach them on each platform</p>
       </div>
       <div class="section-chevron">&#8964;</div>
     </div>
     <div class="section-body">
       <div class="field">
-        <label>Primary audience (from ACO brief) <span class="tag tag-required">Required</span></label>
-        <textarea id="primaryAudience" placeholder="Describe the specific audience segment this campaign targets. Include relevant demographics, behaviours, or psychographics from your ACO brief." style="min-height:70px;" oninput="updateProgress()"></textarea>
+        <label>Primary audience <span class="tag tag-required">Required</span></label>
+        <textarea id="primaryAudience" placeholder="Describe the specific audience segment this campaign targets. Include relevant demographics, behaviours, or psychographics." style="min-height:70px;" oninput="updateProgress()"></textarea>
       </div>
       <div class="field">
         <label>Secondary audience <span class="tag tag-optional">Optional</span></label>
@@ -790,13 +838,13 @@
       <div class="ai-panel" id="audienceAI" style="display:none;">
         <div class="ai-panel-header">
           <div class="ai-dot"></div>
-          <div class="ai-label">AI — platform targeting guidance</div>
+          <div class="ai-label">AI — 2026 audience &amp; targeting analysis</div>
         </div>
         <div class="ai-content" id="audienceAIContent"></div>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="analyseAudienceAndContinue()">Get targeting guidance and continue</button>
+        <button class="btn btn-primary" onclick="analyseAudienceAndContinue()">Analyse audience and continue</button>
       </div>
     </div>
   </div>
@@ -818,48 +866,48 @@
       <div class="field">
         <label>Select channels <span class="tag tag-required">Required</span></label>
         <div class="channel-grid">
-          <label class="channel-option" onclick="toggleChannel(this, 'meta')">
-            <input type="checkbox" value="meta">
+          <label class="channel-option">
+            <input type="checkbox" value="meta" onchange="toggleChannel('meta')">
             <span class="channel-name">Meta (FB/IG)</span>
             <span class="channel-hint">Facebook & Instagram paid</span>
           </label>
-          <label class="channel-option" onclick="toggleChannel(this, 'google')">
-            <input type="checkbox" value="google">
+          <label class="channel-option">
+            <input type="checkbox" value="google" onchange="toggleChannel('google')">
             <span class="channel-name">Google Search</span>
             <span class="channel-hint">Intent-based search ads</span>
           </label>
-          <label class="channel-option" onclick="toggleChannel(this, 'youtube')">
-            <input type="checkbox" value="youtube">
+          <label class="channel-option">
+            <input type="checkbox" value="youtube" onchange="toggleChannel('youtube')">
             <span class="channel-name">YouTube</span>
             <span class="channel-hint">Pre-roll, skippable, bumpers</span>
           </label>
-          <label class="channel-option" onclick="toggleChannel(this, 'display')">
-            <input type="checkbox" value="display">
+          <label class="channel-option">
+            <input type="checkbox" value="display" onchange="toggleChannel('display')">
             <span class="channel-name">Programmatic display</span>
             <span class="channel-hint">Network / DSP-based display</span>
           </label>
-          <label class="channel-option" onclick="toggleChannel(this, 'linkedin')">
-            <input type="checkbox" value="linkedin">
+          <label class="channel-option">
+            <input type="checkbox" value="linkedin" onchange="toggleChannel('linkedin')">
             <span class="channel-name">LinkedIn</span>
             <span class="channel-hint">B2B or professional segments</span>
           </label>
-          <label class="channel-option" onclick="toggleChannel(this, 'tiktok')">
-            <input type="checkbox" value="tiktok">
+          <label class="channel-option">
+            <input type="checkbox" value="tiktok" onchange="toggleChannel('tiktok')">
             <span class="channel-name">TikTok</span>
             <span class="channel-hint">Under-35 reach, video-first</span>
           </label>
-          <label class="channel-option" onclick="toggleChannel(this, 'ooh')">
-            <input type="checkbox" value="ooh">
+          <label class="channel-option">
+            <input type="checkbox" value="ooh" onchange="toggleChannel('ooh')">
             <span class="channel-name">Digital OOH</span>
             <span class="channel-hint">Screens, transit, street</span>
           </label>
-          <label class="channel-option" onclick="toggleChannel(this, 'reddit')">
-            <input type="checkbox" value="reddit">
+          <label class="channel-option">
+            <input type="checkbox" value="reddit" onchange="toggleChannel('reddit')">
             <span class="channel-name">Reddit</span>
             <span class="channel-hint">Community / interest targeting</span>
           </label>
-          <label class="channel-option" onclick="toggleChannel(this, 'sem')">
-            <input type="checkbox" value="sem">
+          <label class="channel-option">
+            <input type="checkbox" value="sem" onchange="toggleChannel('sem')">
             <span class="channel-name">Google Display</span>
             <span class="channel-hint">GDN contextual / audience</span>
           </label>
@@ -871,12 +919,9 @@
         <textarea id="channelRationale" placeholder="Explain why each selected channel is right for this audience and objective. If the answer is 'we've always used it,' reconsider." style="min-height:80px;"></textarea>
       </div>
 
-      <div class="ai-panel" id="channelAI" style="display:none;">
-        <div class="ai-panel-header">
-          <div class="ai-dot"></div>
-          <div class="ai-label">AI — channel challenge</div>
-        </div>
-        <div class="ai-content" id="channelAIContent"></div>
+      <div id="channelCardsContainer" style="display:none; margin-top:16px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;">AI — per-channel analysis</div>
+        <div id="channelCards"></div>
       </div>
 
       <div class="btn-row">
@@ -956,43 +1001,43 @@
       <div class="field">
         <label>Primary success metrics <span class="tag tag-required">At least one conversion metric required</span></label>
         <div class="metrics-grid">
-          <label class="metric-option" onclick="toggleMetric(this)">
-            <input type="checkbox" value="registrations">
+          <label class="metric-option">
+            <input type="checkbox" value="registrations" onchange="toggleMetric('registrations')">
             <span class="metric-name">Registrations / sign-ups</span>
             <span class="metric-type real">Conversion</span>
           </label>
-          <label class="metric-option" onclick="toggleMetric(this)">
-            <input type="checkbox" value="form_completions">
+          <label class="metric-option">
+            <input type="checkbox" value="form_completions" onchange="toggleMetric('form_completions')">
             <span class="metric-name">Form completions</span>
             <span class="metric-type real">Conversion</span>
           </label>
-          <label class="metric-option" onclick="toggleMetric(this)">
-            <input type="checkbox" value="bookings">
+          <label class="metric-option">
+            <input type="checkbox" value="bookings" onchange="toggleMetric('bookings')">
             <span class="metric-name">Bookings / transactions</span>
             <span class="metric-type real">Conversion</span>
           </label>
-          <label class="metric-option" onclick="toggleMetric(this)">
-            <input type="checkbox" value="survey_completions">
+          <label class="metric-option">
+            <input type="checkbox" value="survey_completions" onchange="toggleMetric('survey_completions')">
             <span class="metric-name">Survey / consultation responses</span>
             <span class="metric-type real">Conversion</span>
           </label>
-          <label class="metric-option" onclick="toggleMetric(this)">
-            <input type="checkbox" value="downloads">
+          <label class="metric-option">
+            <input type="checkbox" value="downloads" onchange="toggleMetric('downloads')">
             <span class="metric-name">Document / resource downloads</span>
             <span class="metric-type real">Conversion</span>
           </label>
-          <label class="metric-option" onclick="toggleMetric(this)">
-            <input type="checkbox" value="cpc">
+          <label class="metric-option">
+            <input type="checkbox" value="cpc" onchange="toggleMetric('cpc')">
             <span class="metric-name">Cost per click (CPC)</span>
             <span class="metric-type proxy">Proxy only</span>
           </label>
-          <label class="metric-option" onclick="toggleMetric(this)">
-            <input type="checkbox" value="reach">
+          <label class="metric-option">
+            <input type="checkbox" value="reach" onchange="toggleMetric('reach')">
             <span class="metric-name">Reach / impressions</span>
             <span class="metric-type proxy">Proxy only</span>
           </label>
-          <label class="metric-option" onclick="toggleMetric(this)">
-            <input type="checkbox" value="engagement">
+          <label class="metric-option">
+            <input type="checkbox" value="engagement" onchange="toggleMetric('engagement')">
             <span class="metric-name">Engagement rate</span>
             <span class="metric-type proxy">Proxy only</span>
           </label>
@@ -1168,19 +1213,24 @@
   }
 
   // ---- TOGGLES ----
-  function toggleChannel(el, val) {
-    el.classList.toggle('selected');
+  function toggleChannel(val) {
     const idx = selectedChannels.indexOf(val);
     if (idx > -1) selectedChannels.splice(idx, 1);
     else selectedChannels.push(val);
+    document.querySelectorAll('.channel-option').forEach(el => {
+      const cb = el.querySelector('input[type="checkbox"]');
+      el.classList.toggle('selected', selectedChannels.includes(cb.value));
+    });
   }
 
-  function toggleMetric(el) {
-    el.classList.toggle('selected');
-    const val = el.querySelector('input').value;
+  function toggleMetric(val) {
     const idx = selectedMetrics.indexOf(val);
     if (idx > -1) selectedMetrics.splice(idx, 1);
     else selectedMetrics.push(val);
+    document.querySelectorAll('.metric-option').forEach(el => {
+      const cb = el.querySelector('input[type="checkbox"]');
+      el.classList.toggle('selected', selectedMetrics.includes(cb.value));
+    });
   }
 
   // ---- OWNED CHANNELS ----
@@ -1260,12 +1310,25 @@
     const audience = document.getElementById('primaryAudience').value.trim();
     if (!audience) { alert('Please describe your primary audience.'); return; }
 
-    const channels = selectedChannels.join(', ') || 'not yet selected';
-    setAIContent('audienceAI', 'audienceAIContent', '<span class="ai-thinking">Generating platform targeting guidance...</span>');
+    const secondary = document.getElementById('secondaryAudience').value.trim();
+    const geo = document.getElementById('geoTargeting').value.trim();
 
-    const system = `You are a paid media strategist with deep knowledge of 2026 platform capabilities and targeting options. You advise local government communications teams. Be practical and specific. Reference actual platform targeting capabilities. Maximum 4 short paragraphs — no bullet lists.`;
+    setAIContent('audienceAI', 'audienceAIContent', '<span class="ai-thinking">Analysing audience and generating platform-specific targeting recommendations...</span>');
 
-    const msg = `Audience: "${audience}". Channels being considered: ${channels}. Provide specific, current guidance on how to reach this audience using platform targeting. Flag any targeting limitations. Suggest any audience approaches this team may not have considered. Note: this is a local government context — there are restrictions on certain demographic targeting in political/social categories on Meta.`;
+    const system = `You are a senior paid media strategist with deep hands-on knowledge of platform targeting in 2026. You advise local government communications teams in Australia. Your job is to translate an audience description into specific, actionable targeting recommendations for each major platform — not generic advice, but actual targeting approaches a media buyer would use today.
+
+Be direct and specific. Cover:
+1. Which platforms are genuinely well-suited for this audience and why
+2. Which platforms are poorly suited and why (don't be polite about this)
+3. For the well-suited platforms, name the specific targeting approaches that would work — audience segments, interest categories, behavioural signals, lookalike strategies, geographic approaches
+4. Flag any targeting restrictions relevant to local government (Meta's housing/social issues restrictions, political ad restrictions, etc.)
+5. Note any audience behaviours or platform shifts in 2026 that change the calculus
+
+Write in plain paragraphs. Be opinionated. Maximum 5 paragraphs total.`;
+
+    const msg = `Primary audience: "${audience}".${secondary ? ` Secondary audience: "${secondary}".` : ''} Geographic focus: "${geo || 'City of Sydney LGA'}". Campaign objective: "${document.getElementById('campaignObjective').value}".
+
+Provide specific 2026 platform targeting recommendations for this audience. Which platforms would genuinely reach them? What targeting approaches — specific to each platform — would work? What should be avoided? What's changed in 2026 that affects how this audience is reached?`;
 
     const result = await callClaude(system, msg).catch(err => {
       setAIContent('audienceAI', 'audienceAIContent', `<span style="color:#dc2626;">Error: ${err.message}. Check your API key.</span>`);
@@ -1277,26 +1340,111 @@
   }
 
   // ---- SECTION 4: CHANNELS ----
+  const CHANNEL_NAMES = {
+    meta: 'Meta (Facebook & Instagram)',
+    google: 'Google Search',
+    youtube: 'YouTube',
+    display: 'Programmatic Display',
+    linkedin: 'LinkedIn',
+    tiktok: 'TikTok',
+    ooh: 'Digital Out-of-Home',
+    reddit: 'Reddit',
+    sem: 'Google Display Network'
+  };
+
   async function analyseChannelsAndContinue() {
     if (selectedChannels.length === 0) { alert('Please select at least one channel.'); return; }
 
     const rationale = document.getElementById('channelRationale').value.trim();
     const objective = document.getElementById('campaignObjective').value.trim();
     const audience = document.getElementById('primaryAudience').value.trim();
+    const geo = document.getElementById('geoTargeting').value.trim();
 
-    setAIContent('channelAI', 'channelAIContent', '<span class="ai-thinking">Challenging your channel selection...</span>');
+    const container = document.getElementById('channelCardsContainer');
+    const cardsEl = document.getElementById('channelCards');
+    container.style.display = 'block';
 
-    const system = `You are a senior paid media strategist. Your job is to challenge channel selections that are driven by habit rather than strategy — particularly over-reliance on Meta and Google. You should also proactively suggest channels this team hasn't considered that might be more effective for their objective and audience. You know current 2026 platform performance benchmarks, algorithm changes, and best practices. Be direct and constructive. 3-4 paragraphs maximum.`;
+    // Build a loading card for each channel immediately
+    cardsEl.innerHTML = selectedChannels.map(ch => `
+      <div class="channel-card" id="card-${ch}">
+        <div class="channel-card-header">
+          <div class="channel-card-name">${CHANNEL_NAMES[ch] || ch}</div>
+          <div class="channel-card-verdict verdict-caution" id="verdict-${ch}">Analysing...</div>
+        </div>
+        <div class="channel-card-loading" id="body-${ch}">
+          <div class="spinner" style="width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--cos-accessible-green);border-radius:50%;animation:spin 0.7s linear infinite;"></div>
+          Generating 2026 guidance for ${CHANNEL_NAMES[ch] || ch}...
+        </div>
+      </div>
+    `).join('');
 
-    const msg = `Selected channels: ${selectedChannels.join(', ')}. Rationale given: "${rationale || 'none provided'}". Objective: "${objective}". Audience: "${audience}". Challenge this channel selection. Are these the right choices? Is Meta/Google being used by default? What's missing? What alternatives might outperform for this specific objective and audience in 2026? Note any channels that are particularly well-suited but not selected.`;
+    const system = `You are a senior paid media strategist with deep hands-on expertise in a specific advertising platform. Your job is to give a local government communications team in Australia a precise, opinionated briefing on one specific platform for a specific campaign.
 
-    const result = await callClaude(system, msg).catch(err => {
-      setAIContent('channelAI', 'channelAIContent', `<span style="color:#dc2626;">Error: ${err.message}. Check your API key.</span>`);
-      return null;
+Return ONLY valid JSON in this exact structure — no markdown, no preamble:
+{
+  "verdict": "good_fit" | "use_with_caution" | "not_recommended",
+  "verdict_reason": "One sentence explaining the verdict",
+  "targeting_approach": "Specific targeting strategy for this platform — name actual audience segments, match types, bidding strategies, or targeting features available in 2026",
+  "format_recommendation": "Specific creative format(s) that are performing well on this platform right now for this type of campaign",
+  "benchmark": "Realistic CPC, CPM, or CPA benchmarks for local government campaigns of this type in Australia in 2026",
+  "watch_out": "The one thing most likely to go wrong or waste money on this platform for this campaign",
+  "local_gov_note": "Any platform-specific restrictions, policies, or considerations specifically relevant to local government advertisers in Australia — or null if none"
+}`;
+
+    // Fire all channel calls in parallel
+    const promises = selectedChannels.map(async ch => {
+      const msg = `Platform: ${CHANNEL_NAMES[ch]}. Campaign objective: "${objective}". Primary audience: "${audience}". Geographic focus: "${geo || 'City of Sydney LGA, inner Sydney'}". Rationale given: "${rationale || 'none provided'}".
+
+Provide a precise 2026 briefing for this platform. Is it a good fit for this campaign? What targeting approach would you use? What format? What benchmarks should they expect? What's the biggest risk?`;
+
+      try {
+        const raw = await callClaude(system, msg);
+        const clean = raw.replace(/```json|```/g, '').trim();
+        const data = JSON.parse(clean);
+        renderChannelCard(ch, data);
+      } catch(err) {
+        renderChannelCardError(ch, err.message);
+      }
     });
-    if (!result) return;
-    setAIContent('channelAI', 'channelAIContent', result.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
+
+    await Promise.all(promises);
     completeSection(4);
+  }
+
+  function renderChannelCard(ch, data) {
+    const verdictMap = {
+      good_fit: { cls: 'verdict-good', label: 'Good fit' },
+      use_with_caution: { cls: 'verdict-caution', label: 'Use with caution' },
+      not_recommended: { cls: 'verdict-avoid', label: 'Not recommended' }
+    };
+    const v = verdictMap[data.verdict] || verdictMap['use_with_caution'];
+
+    document.getElementById(`verdict-${ch}`).className = `channel-card-verdict ${v.cls}`;
+    document.getElementById(`verdict-${ch}`).textContent = v.label;
+
+    const rows = [
+      { label: 'Verdict', value: data.verdict_reason },
+      { label: 'Targeting approach', value: data.targeting_approach },
+      { label: 'Format', value: data.format_recommendation },
+      { label: 'Benchmarks', value: data.benchmark },
+      { label: 'Watch out', value: data.watch_out },
+      data.local_gov_note ? { label: 'Local gov note', value: data.local_gov_note, highlight: true } : null
+    ].filter(Boolean);
+
+    document.getElementById(`body-${ch}`).className = 'channel-card-body';
+    document.getElementById(`body-${ch}`).innerHTML = rows.map(r => `
+      <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);${r === rows[rows.length-1] ? 'border-bottom:none;margin-bottom:0;padding-bottom:0;' : ''}">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:${r.highlight ? '#c06000' : 'var(--text-muted)'};margin-bottom:3px;">${r.label}</div>
+        <div style="font-size:13px;color:var(--text-primary);line-height:1.6;${r.highlight ? 'color:#7a4500;' : ''}">${r.value}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderChannelCardError(ch, msg) {
+    document.getElementById(`verdict-${ch}`).className = 'channel-card-verdict verdict-avoid';
+    document.getElementById(`verdict-${ch}`).textContent = 'Error';
+    document.getElementById(`body-${ch}`).className = 'channel-card-body';
+    document.getElementById(`body-${ch}`).innerHTML = `<div style="font-size:13px;color:#dc2626;">Failed to load: ${msg}. Check your API key.</div>`;
   }
 
   // ---- SECTION 5: CREATIVE ----
