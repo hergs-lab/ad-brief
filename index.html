@@ -869,47 +869,47 @@
           <label class="channel-option">
             <input type="checkbox" value="meta" onchange="toggleChannel('meta')">
             <span class="channel-name">Meta (FB/IG)</span>
-            <span class="channel-hint">Facebook & Instagram paid</span>
+            <span class="channel-hint">Broad reach by interest, location & behaviour. Best for awareness and community-facing campaigns. Algorithm rewards native-looking content.</span>
           </label>
           <label class="channel-option">
             <input type="checkbox" value="google" onchange="toggleChannel('google')">
             <span class="channel-name">Google Search</span>
-            <span class="channel-hint">Intent-based search ads</span>
+            <span class="channel-hint">Captures people actively searching for something. Only works if your audience knows what they're looking for. High intent, higher CPC.</span>
           </label>
           <label class="channel-option">
             <input type="checkbox" value="youtube" onchange="toggleChannel('youtube')">
             <span class="channel-name">YouTube</span>
-            <span class="channel-hint">Pre-roll, skippable, bumpers</span>
+            <span class="channel-hint">Video-first. Good for explanation, demonstration, or brand awareness at scale. Skippable formats require a strong first 5 seconds.</span>
           </label>
           <label class="channel-option">
             <input type="checkbox" value="display" onchange="toggleChannel('display')">
-            <span class="channel-name">Programmatic display</span>
-            <span class="channel-hint">Network / DSP-based display</span>
+            <span class="channel-name">Programmatic Display</span>
+            <span class="channel-hint">Banner ads across thousands of websites. Low CPM but low attention. Better for retargeting than cold audiences. Often over-used.</span>
           </label>
           <label class="channel-option">
             <input type="checkbox" value="linkedin" onchange="toggleChannel('linkedin')">
             <span class="channel-name">LinkedIn</span>
-            <span class="channel-hint">B2B or professional segments</span>
+            <span class="channel-hint">Precise professional targeting — job title, industry, seniority. Very expensive CPCs. Rarely justified for community or resident campaigns.</span>
           </label>
           <label class="channel-option">
             <input type="checkbox" value="tiktok" onchange="toggleChannel('tiktok')">
             <span class="channel-name">TikTok</span>
-            <span class="channel-hint">Under-35 reach, video-first</span>
+            <span class="channel-hint">Dominant for under-35s. Algorithm distributes content based on engagement, not just spend. Requires genuine platform-native creative to perform.</span>
           </label>
           <label class="channel-option">
             <input type="checkbox" value="ooh" onchange="toggleChannel('ooh')">
-            <span class="channel-name">Digital OOH</span>
-            <span class="channel-hint">Screens, transit, street</span>
+            <span class="channel-name">Digital Out-of-Home</span>
+            <span class="channel-hint">Screens in streets, transit, shopping centres. No targeting beyond location and time-of-day. Good for high-footfall local awareness.</span>
           </label>
           <label class="channel-option">
             <input type="checkbox" value="reddit" onchange="toggleChannel('reddit')">
             <span class="channel-name">Reddit</span>
-            <span class="channel-hint">Community / interest targeting</span>
+            <span class="channel-hint">Highly engaged niche communities. Unusually ad-sceptical audience — tone matters enormously. Good for specific interest or local community targeting.</span>
           </label>
           <label class="channel-option">
             <input type="checkbox" value="sem" onchange="toggleChannel('sem')">
-            <span class="channel-name">Google Display</span>
-            <span class="channel-hint">GDN contextual / audience</span>
+            <span class="channel-name">Google Display Network</span>
+            <span class="channel-hint">Google-served banners using audience and contextual signals. More targeted than open programmatic. Useful for retargeting website visitors.</span>
           </label>
         </div>
       </div>
@@ -1313,30 +1313,92 @@
     const secondary = document.getElementById('secondaryAudience').value.trim();
     const geo = document.getElementById('geoTargeting').value.trim();
 
-    setAIContent('audienceAI', 'audienceAIContent', '<span class="ai-thinking">Analysing audience and generating platform-specific targeting recommendations...</span>');
+    setAIContent('audienceAI', 'audienceAIContent', '<span class="ai-thinking">Analysing audience — assessing platform presence and targeting approach...</span>');
 
-    const system = `You are a senior paid media strategist with deep hands-on knowledge of platform targeting in 2026. You advise local government communications teams in Australia. Your job is to translate an audience description into specific, actionable targeting recommendations for each major platform — not generic advice, but actual targeting approaches a media buyer would use today.
+    const system = `You are a senior paid media strategist advising a local government communications team in Australia. You have deep knowledge of where different audience segments actually spend time online in 2026 and how to reach them.
 
-Be direct and specific. Cover:
-1. Which platforms are genuinely well-suited for this audience and why
-2. Which platforms are poorly suited and why (don't be polite about this)
-3. For the well-suited platforms, name the specific targeting approaches that would work — audience segments, interest categories, behavioural signals, lookalike strategies, geographic approaches
-4. Flag any targeting restrictions relevant to local government (Meta's housing/social issues restrictions, political ad restrictions, etc.)
-5. Note any audience behaviours or platform shifts in 2026 that change the calculus
+Return ONLY valid JSON — no markdown, no preamble:
+{
+  "audience_summary": "One sentence characterising this audience for media planning purposes",
+  "platform_presence": [
+    {
+      "platform": "platform name",
+      "presence": "strong" | "moderate" | "weak" | "not_present",
+      "reason": "One sentence — why this audience is or isn't on this platform in meaningful numbers"
+    }
+  ],
+  "targeting_approach": ["Short specific bullet — one targeting approach or signal, under 15 words"],
+  "targeting_watch_outs": ["Short specific bullet — one limitation or risk, under 15 words"],
+  "local_gov_restrictions": "One sentence on targeting restrictions relevant to Australian local government, or null"
+}
 
-Write in plain paragraphs. Be opinionated. Maximum 5 paragraphs total.`;
+platform_presence must cover exactly these 8 platforms in order: Meta (Facebook/Instagram), Google Search, YouTube, TikTok, LinkedIn, Reddit, Programmatic Display, Digital OOH.
+targeting_approach: 3-5 bullets max. targeting_watch_outs: 2-3 bullets max. Be honest — don't inflate weak presence.`;
 
-    const msg = `Primary audience: "${audience}".${secondary ? ` Secondary audience: "${secondary}".` : ''} Geographic focus: "${geo || 'City of Sydney LGA'}". Campaign objective: "${document.getElementById('campaignObjective').value}".
+    const msg = `Primary audience: "${audience}".${secondary ? ` Secondary audience: "${secondary}".` : ''} Geographic focus: "${geo || 'City of Sydney LGA, inner Sydney'}". Campaign objective: "${document.getElementById('campaignObjective').value}".`;
 
-Provide specific 2026 platform targeting recommendations for this audience. Which platforms would genuinely reach them? What targeting approaches — specific to each platform — would work? What should be avoided? What's changed in 2026 that affects how this audience is reached?`;
-
-    const result = await callClaude(system, msg).catch(err => {
+    try {
+      const raw = await callClaude(system, msg);
+      const clean = raw.replace(/```json|```/g, '').trim();
+      const data = JSON.parse(clean);
+      renderAudienceAI(data);
+    } catch(err) {
       setAIContent('audienceAI', 'audienceAIContent', `<span style="color:#dc2626;">Error: ${err.message}. Check your API key.</span>`);
-      return null;
-    });
-    if (!result) return;
-    setAIContent('audienceAI', 'audienceAIContent', result.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''));
+      return;
+    }
     completeSection(3);
+  }
+
+  function renderAudienceAI(data) {
+    const presenceConfig = {
+      strong:      { colour: '#188838', bg: '#f0faf3', label: 'Strong' },
+      moderate:    { colour: '#d97706', bg: '#fffbeb', label: 'Moderate' },
+      weak:        { colour: '#6b7280', bg: '#f9fafb', label: 'Weak' },
+      not_present: { colour: '#dc2626', bg: '#fef2f2', label: 'Not present' }
+    };
+
+    let html = `<p style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:14px;">${data.audience_summary}</p>`;
+
+    html += `<div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Where this audience exists</div>`;
+    html += `<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:16px;">`;
+    (data.platform_presence || []).forEach(p => {
+      const cfg = presenceConfig[p.presence] || presenceConfig.weak;
+      html += `<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 10px;border-radius:6px;background:${cfg.bg};border:1px solid ${cfg.colour}33;">
+        <div style="flex-shrink:0;width:160px;display:flex;align-items:center;gap:6px;">
+          <div style="width:6px;height:6px;border-radius:50%;background:${cfg.colour};flex-shrink:0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-primary);line-height:1.2;">${p.platform}</div>
+            <div style="font-size:10px;font-weight:600;color:${cfg.colour};">${cfg.label}</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);line-height:1.5;padding-top:1px;">${p.reason}</div>
+      </div>`;
+    });
+    html += `</div>`;
+
+    if (data.targeting_approach?.length) {
+      html += `<div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Targeting approach</div>`;
+      html += `<ul style="margin:0 0 14px 0;padding-left:16px;display:flex;flex-direction:column;gap:4px;">`;
+      data.targeting_approach.forEach(b => { html += `<li style="font-size:13px;color:var(--text-primary);line-height:1.5;">${b}</li>`; });
+      html += `</ul>`;
+    }
+
+    if (data.targeting_watch_outs?.length) {
+      html += `<div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c06000;margin-bottom:6px;">Watch outs</div>`;
+      html += `<ul style="margin:0 0 14px 0;padding-left:16px;display:flex;flex-direction:column;gap:4px;">`;
+      data.targeting_watch_outs.forEach(b => { html += `<li style="font-size:13px;color:#7a4500;line-height:1.5;">${b}</li>`; });
+      html += `</ul>`;
+    }
+
+    if (data.local_gov_restrictions) {
+      html += `<div style="background:#fff8f0;border:1px solid rgba(224,123,0,0.3);border-radius:6px;padding:10px 12px;font-size:12px;color:#7a4500;line-height:1.5;">
+        <strong style="display:block;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:#e07b00;margin-bottom:3px;">Local gov note</strong>
+        ${data.local_gov_restrictions}
+      </div>`;
+    }
+
+    document.getElementById('audienceAI').style.display = 'block';
+    document.getElementById('audienceAIContent').innerHTML = html;
   }
 
   // ---- SECTION 4: CHANNELS ----
@@ -1378,18 +1440,20 @@ Provide specific 2026 platform targeting recommendations for this audience. Whic
       </div>
     `).join('');
 
-    const system = `You are a senior paid media strategist with deep hands-on expertise in a specific advertising platform. Your job is to give a local government communications team in Australia a precise, opinionated briefing on one specific platform for a specific campaign.
+    const system = `You are a senior paid media strategist with deep hands-on expertise in a specific advertising platform. Give a local government communications team in Australia a precise, scannable briefing on one platform for a specific campaign.
 
-Return ONLY valid JSON in this exact structure — no markdown, no preamble:
+Return ONLY valid JSON — no markdown, no preamble:
 {
   "verdict": "good_fit" | "use_with_caution" | "not_recommended",
-  "verdict_reason": "One sentence explaining the verdict",
-  "targeting_approach": "Specific targeting strategy for this platform — name actual audience segments, match types, bidding strategies, or targeting features available in 2026",
-  "format_recommendation": "Specific creative format(s) that are performing well on this platform right now for this type of campaign",
-  "benchmark": "Realistic CPC, CPM, or CPA benchmarks for local government campaigns of this type in Australia in 2026",
-  "watch_out": "The one thing most likely to go wrong or waste money on this platform for this campaign",
-  "local_gov_note": "Any platform-specific restrictions, policies, or considerations specifically relevant to local government advertisers in Australia — or null if none"
-}`;
+  "verdict_reason": "One sentence",
+  "targeting": ["Specific targeting bullet, under 15 words each"],
+  "formats": ["Specific format bullet, under 15 words each"],
+  "benchmark": "One sentence — realistic CPC/CPM/CPA for local government in Australia 2026",
+  "watch_outs": ["Specific risk or waste pattern, under 15 words each"],
+  "local_gov_note": "One sentence on platform restrictions for Australian local government, or null"
+}
+
+targeting: 2-4 bullets. formats: 2-3 bullets. watch_outs: 2-3 bullets. Be specific and direct.`;
 
     // Fire all channel calls in parallel
     const promises = selectedChannels.map(async ch => {
@@ -1422,22 +1486,31 @@ Provide a precise 2026 briefing for this platform. Is it a good fit for this cam
     document.getElementById(`verdict-${ch}`).className = `channel-card-verdict ${v.cls}`;
     document.getElementById(`verdict-${ch}`).textContent = v.label;
 
-    const rows = [
-      { label: 'Verdict', value: data.verdict_reason },
-      { label: 'Targeting approach', value: data.targeting_approach },
-      { label: 'Format', value: data.format_recommendation },
-      { label: 'Benchmarks', value: data.benchmark },
-      { label: 'Watch out', value: data.watch_out },
-      data.local_gov_note ? { label: 'Local gov note', value: data.local_gov_note, highlight: true } : null
+    const bullets = (items, colour) => items?.length
+      ? `<ul style="margin:0;padding-left:16px;display:flex;flex-direction:column;gap:3px;">${items.map(b =>
+          `<li style="font-size:12px;color:${colour};line-height:1.5;">${b}</li>`).join('')}</ul>`
+      : '';
+
+    let html = `<div style="font-size:12px;color:var(--text-secondary);line-height:1.5;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">${data.verdict_reason}</div>`;
+
+    const sections = [
+      { label: 'Targeting', content: bullets(data.targeting, 'var(--text-primary)') },
+      { label: 'Formats', content: bullets(data.formats, 'var(--text-primary)') },
+      { label: 'Benchmarks', content: `<span style="font-size:12px;color:var(--text-primary);line-height:1.5;">${data.benchmark}</span>` },
+      { label: 'Watch outs', content: bullets(data.watch_outs, '#7a4500'), warning: true },
+      data.local_gov_note ? { label: 'Local gov note', content: `<span style="font-size:12px;color:#7a4500;line-height:1.5;">${data.local_gov_note}</span>`, warning: true } : null
     ].filter(Boolean);
 
+    sections.forEach((s, i) => {
+      const isLast = i === sections.length - 1;
+      html += `<div style="margin-bottom:${isLast ? '0' : '10px'};padding-bottom:${isLast ? '0' : '10px'};border-bottom:${isLast ? 'none' : '1px solid var(--border)'};">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:${s.warning ? '#c06000' : 'var(--text-muted)'};margin-bottom:5px;">${s.label}</div>
+        ${s.content}
+      </div>`;
+    });
+
     document.getElementById(`body-${ch}`).className = 'channel-card-body';
-    document.getElementById(`body-${ch}`).innerHTML = rows.map(r => `
-      <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);${r === rows[rows.length-1] ? 'border-bottom:none;margin-bottom:0;padding-bottom:0;' : ''}">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:${r.highlight ? '#c06000' : 'var(--text-muted)'};margin-bottom:3px;">${r.label}</div>
-        <div style="font-size:13px;color:var(--text-primary);line-height:1.6;${r.highlight ? 'color:#7a4500;' : ''}">${r.value}</div>
-      </div>
-    `).join('');
+    document.getElementById(`body-${ch}`).innerHTML = html;
   }
 
   function renderChannelCardError(ch, msg) {
